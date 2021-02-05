@@ -26,5 +26,7 @@
     // + 웹페이지 주소
     $website = "https://my3my3my.tk/website/";
 
+    // + 구분자
+    $separator = "§▼▩";
 
 ?>

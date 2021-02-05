@@ -15,10 +15,12 @@ $email = $_POST['email'];
 $pw = $_POST['pw'];
 $nickname = $_POST['nickname'];
 
+// 기본 프로필 사진 이미지
+$profile_url = $website."system_img/basic_profile_img.png";
 
 // 파일받기
     // form태그를 이용해서 전송된 파일은 $_FILES를 통해 접근 가능
-if($_FILES['uploadedfile']['name']){
+if(isset($_FILES['uploadedfile']['name'])){
     //echo "filename=".$_FILES['uploadedfile']['name'];
 
     if(!$_FILES['uploadedfile']['error']){
@@ -58,12 +60,12 @@ if($_FILES['uploadedfile']['name']){
         
     }else{
         // 파일 에러
-        echo "file error";
+        echo "file error".$separator;
     }
 
 }else{
-    // 파일이 정의되어 있지 않음
-    echo "Undefined file";
+    // 파일이 정의되어 있지 않음 -> default 이미지
+    echo "Undefined file".$separator;
 }
 
 /*
@@ -75,6 +77,6 @@ $sql = mq($temp);
 if($sql){
     echo "success";
 }else{
-    echo mysqli_error($db);
+    echo mysqli_error($db).$separator."error";
 }
 ?>
