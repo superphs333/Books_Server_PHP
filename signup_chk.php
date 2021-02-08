@@ -72,7 +72,11 @@ if(isset($_FILES['uploadedfile']['name'])){
 sql문 적용
 : email, pw, nickname, profile_url
 */
-$temp = "insert into members(email, pw, nickname, profile_url) values('{$email}','{$pw}','{$nickname}','{$profile_url}')";
+// 유일키 
+$time = date('yyyymmddh_i_s_u');
+$Unique_Value = uniqid($time);
+// 데이터베이스에 저장
+$temp = "insert into members(Unique_Value,login_value, pw, nickname, profile_url) values('{$Unique_Value}','{$email}','{$pw}','{$nickname}','{$profile_url}')";
 $sql = mq($temp);
 if($sql){
     echo "success";

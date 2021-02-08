@@ -15,9 +15,9 @@ include_once('db_config.php');
 $sort = $_POST['sort'];
 
 if($sort=="email"){// 이메일 체크
-    $temp = "select email from members where email='{$_POST['input']}'";
+    $temp = "select login_value from members where login_value='{$_POST['input']}'";
 }else if($sort=="nickname"){// 닉네임 체크
-    $temp = "select email from members where nickname='{$_POST['input']}'";
+    $temp = "select login_value from members where nickname='{$_POST['input']}'";
 }
 
 // 결과값 갯수 가져오기

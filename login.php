@@ -12,18 +12,10 @@ $input = "email={$email}, pw={$pw}";
 //echo $input;
 
 // 받아온 이메일, 비밀번호 셋트가 있는지 확인한다
-$temp = "select count(*) from members where email='{$email}' and pw='{$pw}'";
-//echo $temp;
+$temp = "select login_value from members where login_value='{$email}' and pw='{$pw}'";
 $sql = mq($temp);
-
-if($sql){
-    print_r($sql);
-    /*
-    [사용법] - http://106.255.249.194:19180/detail.html?no=1003
-    */
-    
-}else{
-    echo mysqli_error($db);
-}
-
+$count = $sql->num_rows;
+echo $count;
+    // count = 1(값존재)
+    // count = 0(값없음)
 ?>
