@@ -6,5 +6,5 @@ ini_set('display_errors',1);
 include_once('db_config.php');
 
 // 회원정보를 가져올 수 있는 값 받아오기
-
+$login_value = $_POST['login_value'];
 ?>
