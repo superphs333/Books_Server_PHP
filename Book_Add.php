@@ -17,6 +17,7 @@ $isbn = $_POST['isbn'];
 $total_page = $_POST['total_page'];
 $contents = $_POST['contents'];
 $from_ = "add";
+$login_value = $_POST['login_value'];
 
 // 기본 프로필 사진 이미지
 $thumbnail = $website."system_img/basic_book_cover.png";
@@ -62,20 +63,31 @@ if(isset($_FILES['uploadedfile']['name'])){
 
 /*
 sql문 적용
-:
+: 책추가(Books) --(성공시)--> My_Books에 추가
 */
 // 유일키 
-$time = date('yyyymmddh_i_s_u');
-$Unique_Value = uniqid($time);
-echo $Unique_Value;
-$temp = "INSERT INTO Books(`unique_book_value`, `title`, `authors`, `publisher`, `isbn`, `thumbnail`, `contents`, `from_`) VALUES('{$Unique_Value}','{$title}','{$authors}','{$publisher}','{$isbn}','{$thumbnail}','{$contents}','{$from_}')";
-//echo $temp;
-// // 데이터베이스에 저장
-// $temp = "insert into members(Unique_Value,login_value, pw, nickname, profile_url) values('{$Unique_Value}','{$email}','{$pw}','{$nickname}','{$profile_url}')";
-// $sql = mq($temp);
-// if($sql){
-//     echo "success";
-// }else{
-//     echo mysqli_error($db).$separator."error";
-// }
+$time = date('yyyymdHis');
+$unique_book_value = $time.rand(1,70000);
+$temp = "INSERT INTO Books(`unique_book_value`, `title`, `authors`, `publisher`, `isbn`, `thumbnail`, `contents`, `from_`) VALUES('{$unique_book_value}','{$title}','{$authors}','{$publisher}','{$isbn}','{$thumbnail}','{$contents}','{$from_}')";
+$sql = mq($temp);
+if($sql){
+    echo "success".$separator;
+    
+
+    // 데이터 베이스에 My_Books에 해당 책 저장
+    $rating = $_POST['rating'];
+    $status = $_POST['status'];
+
+    // sql문 
+    $temp = "INSERT INTO My_Books(`login_value`, `unique_book_value`, `status`, `rating`) VALUES('{$login_value}','{$unique_book_value}','{$status}','{$rating}')";
+    $sql = mq($temp);
+    if($sql){
+        echo "success";
+    }else{    
+        echo mysqli_error($db);
+    }
+
+}else{
+    echo mysqli_error($db);
+}
 ?>
