@@ -14,9 +14,9 @@ $search = $_POST['search'];
 // sql문
     // status -> 값이 없는 경우에는 모두(status=0, 1, 2)
 if($status=="0" || $status=="1" || $status=="2"){ // 값이 있는 경우
-    $temp = "SELECT Books.unique_book_value, title, authors, thumbnail, contents, from_, isbn, status, rating FROM My_Books JOIN Books ON My_Books.unique_book_value=Books.unique_book_value WHERE login_value='{$login_value}' and status={$status} and (title LIKE '%{$search}%' OR authors LIKE '%{$search}%')";
+    $temp = "SELECT Books.unique_book_value, title, authors, thumbnail, contents, My_Books.from_, isbn, status, rating FROM My_Books JOIN Books ON My_Books.unique_book_value=Books.unique_book_value WHERE login_value='{$login_value}' and status={$status} and (title LIKE '%{$search}%' OR authors LIKE '%{$search}%')";
 }else{ // status가 값이 없는 경우
-    $temp = "SELECT Books.unique_book_value, title, authors, thumbnail, contents, from_, isbn, status, rating FROM My_Books JOIN Books ON My_Books.unique_book_value=Books.unique_book_value WHERE login_value='{$login_value}' and (title LIKE '%{$search}%' OR authors LIKE '%{$search}%')";
+    $temp = "SELECT Books.unique_book_value, title, authors, thumbnail, contents, My_Books.from_, isbn, status, rating FROM My_Books JOIN Books ON My_Books.unique_book_value=Books.unique_book_value WHERE login_value='{$login_value}' and (title LIKE '%{$search}%' OR authors LIKE '%{$search}%')";
 }
 
 //echo $temp;
