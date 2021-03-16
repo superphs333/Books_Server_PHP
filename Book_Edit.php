@@ -8,19 +8,24 @@ include_once('db_config.php');
 /*
 데이터 받아오기
 */
-// 안드로이드 코드의 postParameters변수에 적어둔 
-// 이름을 가지고 값을 전달받는다
+$unique_book_value = $_POST['unique_book_value'];
 $title = $_POST['title'];
 $authors = $_POST['authors'];
 $publisher = $_POST['publisher'];
 $isbn = $_POST['isbn'];
 $total_page = $_POST['total_page'];
 $contents = $_POST['contents'];
-$from_ = "add";
 $login_value = $_POST['login_value'];
+$img_change = $_POST['img_change'];
 
-// 기본 프로필 사진 이미지
-$thumbnail = $website."system_img/basic_book_cover.png";
+
+// img_change=false -> 기존 프로필 사진 이미지  
+if($img_change=="false"){
+    $thumbnail = $_POST['thumbnail'];
+}else{ // 이미지가 없는 경우 -> 기본 이미지
+    $thumbnail = $website."system_img/basic_book_cover.png";
+}
+
 
 
 // 파일받기(받은 파일이 있는 경우에만)
@@ -63,23 +68,19 @@ if(isset($_FILES['uploadedfile']['name'])){
 
 /*
 sql문 적용
-: 책추가(Books) --(성공시)--> My_Books에 추가
+: 책수정(Books) --(성공시)--> My_Books에 추가
 */
-// 유일키 
-$time = date('ymdHis');
-$unique_book_value = $time.$title;
-$temp = "INSERT INTO Books(`unique_book_value`, `title`, `authors`, `publisher`, `isbn`, `thumbnail`, `contents`, `from_`) VALUES('{$unique_book_value}','{$title}','{$authors}','{$publisher}','{$isbn}','{$thumbnail}','{$contents}','{$from_}')";
+$temp = "UPDATE Books SET title='{$title}', authors='{$authors}', publisher='{$publisher}', isbn='{$isbn}', thumbnail='{$thumbnail}', contents='{$contents}' WHERE unique_book_value='{$unique_book_value}'";
 $sql = mq($temp);
 if($sql){
     echo "success".$separator;
     
-
-    // 데이터 베이스에 My_Books에 해당 책 저장
+    // 데이터 베이스에 My_Books에 해당 책 수정
     $rating = $_POST['rating'];
     $status = $_POST['status'];
 
     // sql문 
-    $temp = "INSERT INTO My_Books(`login_value`, `unique_book_value`, `status`, `rating`) VALUES('{$login_value}','{$unique_book_value}','{$status}','{$rating}')";
+    $temp = "UPDATE My_Books SET status='{$status}', rating='{$rating}' WHERE unique_book_value='{$unique_book_value}' and login_value='{$login_value}'";
     $sql = mq($temp);
     if($sql){
         echo "success";
