@@ -5,11 +5,11 @@ include_once('../db_config.php');
 
 // 데이터 받아오기
 $login_value = $_POST['login_value'];
-//$login_value = "dlthdus943@naver.com";
+// $login_value = "dlthdus943@naver.com";
 $status = $_POST['status'];
-//$status = 0;
+// $status = 2;
 $search = $_POST['search'];
-//$search = "F";
+// $search = "F";
 
 // sql문
     // status -> 값이 없는 경우에는 모두(status=0, 1, 2)
