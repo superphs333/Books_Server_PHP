@@ -56,7 +56,7 @@ $imgs = implode('§',$imgs); // string으로 변환
 데이터베이스에 해당 데이터 수정
 */
 $temp = "UPDATE Book_Memo SET img_urls='{$imgs}', memo='{$memo}', page={$page}, open='{$open}' WHERE idx={$idx}";
-echo $temp;
+//echo $temp;
 $sql = mq($temp);
 if($sql){
     echo "success";
