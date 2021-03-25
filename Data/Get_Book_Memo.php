@@ -65,14 +65,4 @@ echo json_encode($list)
 
 
 
-// if($sql){
-//     //echo "su";
-//     $dbdata = array();
-//     while($row=$sql->fetch_assoc()){
-//         $dbdata[]=$row;
-//     }
-//     echo json_encode($dbdata);
-// }else{
-//     echo mysqli_error($db);
-// }
 ?>
