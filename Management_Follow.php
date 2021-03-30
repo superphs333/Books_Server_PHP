@@ -17,8 +17,11 @@ if($management=="invisible"){
 
 }else if($management=="following"){
     
-    $temp = "INSERT INTO Follow(`To_login_value`, `From_login_value`) VALUES('{$From_login_value}','{$To_login_value}')";
+    // $temp = "INSERT INTO Follow(`To_login_value`, `From_login_value`) VALUES('{$From_login_value}','{$To_login_value}')";
 
+    $temp = "INSERT INTO Follow(`From_login_value`, `To_login_value`) VALUES('{$From_login_value}','{$To_login_value}')";
+
+    //echo $temp;
    
 }else if($management=="delete_following"){
 
