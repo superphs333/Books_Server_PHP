@@ -36,7 +36,16 @@ $sql = mq($temp);
 if($sql){
     echo "success§";
 
-    // 
+    // $_POST['leader_change']가 존재하면 -> 리더변경
+    if(isset($_POST['leader_change'])){
+        $temp2 = "UPDATE Chatting_Room SET leader='{$_POST['leader']}' WHERE idx={$idx}";
+        $sql2 = mq($temp2);
+        if($sql){
+            
+        }else{
+            //echo mysqli_error($db);
+        }
+    }
 
     // 현재 참여자 수
     $temp_count2 = "SELECT title, room_explain, total_count, Chatting_Room.idx as idx, COUNT(Chatting_Room.idx) as join_count FROM Chatting_Room LEFT JOIN Join_Chatting_Room ON Chatting_Room.idx=Join_Chatting_Room.room_idx WHERE Join_Chatting_Room.status=1 AND idx={$idx} GROUP BY Chatting_Room.idx";
