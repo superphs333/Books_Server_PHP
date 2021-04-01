@@ -52,7 +52,74 @@ if($sql){
     $sql_count2 = mq($temp_count2);
     $row2 = $sql_count2->fetch_array();
     $count2 = $row2['join_count'];
-    echo $count2;
+    echo $count2."§";
+
+    
+    /*
+    state=true -> 대기자 첫번째에게 알림 전송
+    */
+    if($state=="true"){
+        // 세션을 초기화하고 다른 Curl함수에 전달 할 수 있는 Curl핸들을 반환한다
+        $ch = curl_init("https://fcm.googleapis.com/fcm/send");
+
+
+        // 대상추출
+        $temp = "SELECT members.sender_id, members.login_value FROM Join_Chatting_Room LEFT JOIN members ON members.login_value=Join_Chatting_Room.login_value WHERE room_idx={$idx} AND status=0 ORDER BY date_time ASC";
+        $sql = mq($temp);
+        // $registration_ids_array = array(); // sender_id를 담을 리스트
+        // while($row=$sql->fetch_array()){
+        //     array_push($registration_ids_array,$row['sender_id']);
+        // }
+        $row = $sql->fetch_array();
+        $to = $row['sender_id']; // 보낼 대상의 sender_id
+        $to_login_value = $row['login_value']; //  보낼 대상
+        $counts = mysqli_num_rows($sql); // 숫자
+
+        if($counts>=1){
+            // 데이터베이스 업데이트(Join_Chatting_Room => status=1)
+            $temp = "UPDATE Join_Chatting_Room SET status=1 WHERE login_value='{$to_login_value}' AND room_idx={$idx}";
+            $sql = mq($temp);
+            if($sql){
+                echo "success";
+            }else{   
+                echo mysqli_error($db);
+            }
+            
+            // title
+            $temp = "SELECT title FROM Chatting_Room WHERE idx={$idx}";
+            $sql = mq($temp);
+            $row = $sql->fetch_array();
+            $title = $row['title'];
+
+
+            // 알람 보내기(여기서는 데이터메세지 형식으로 보냄)
+                /* 형식
+                제목 - 알림
+                내용 - {title}
+                */
+            $header = array("Content-Type:application/json", "Authorization:key=AAAAaJ1uhgs:APA91bFFrgsrQi45vdeFlLseuEqlOH-tSnplk7kcgl6-gpFZfmvDvjc7cC_yXY9nFthWCCwQol5fR9qFZQBpHNT2ilTGI8-4SjgPGl_gzDBmVdu7YfS7xCRhoDi8VHQzC_Im_CnA9Jom");
+            $data = json_encode(array(
+                "to"=>$to,
+                "data" => array(
+                    "sort"   => "For_chatting_room_waiting_list",
+                    "idx" => "{$idx}",
+                    "title" => "알림",
+                    "message" => "대기중이셨던 채팅방 {$title}에 입장되셨습니다!")
+                    ));
+            // curl 옵션
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+            // curl 세션 시작
+            curl_exec($ch);
+
+            // curl 세션 종료
+            curl_close($ch);
+        }
+    } // end $state=="true"
+
 }else{   
     //echo mysqli_error($db);
 
