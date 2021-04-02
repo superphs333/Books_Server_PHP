@@ -2,6 +2,7 @@
 error_reporting(E_ALL); 
 ini_set('display_errors',1);
 include_once('./db_config.php');
+include_once('./Function/Function_Group.php');
 
 // 데이터 받아오기
 $idx_memo = $_POST['idx_memo'];
@@ -35,7 +36,31 @@ if($sql){
         $sql_count = mq($temp_count);
         $row=$sql_count->fetch_array();
         $count = $row['count_heart'];
-        echo $count;
+        echo $count.$separator;;
+
+        /*
+        알림
+        */
+        if($check_heart=="false"){
+            // nickname 받아오기
+            $temp = "SELECT nickname FROM members WHERE login_value='{$login_value}'";
+            $sql = mq($temp);
+            $row = $sql->fetch_array();
+            $nickname = $row['nickname'];
+
+            // fcm에 보낼 데이터
+            $data = json_encode(array(
+                "to"=>$to,
+                "data" => array(
+                    "sort"   => "For_memo_like",
+                    "idx" => "{$idx_memo}",
+                    "title" => "알림",
+                    "message" => "{$nickname}님이 회원님의 게시글에 좋아요를 눌렀습니다!")
+                    ));
+                    
+            // 알림보내기(데이터메세지 형식)
+            send_alarm($data);
+        } // end if
     }else{   
         echo mysqli_error($db);
     }

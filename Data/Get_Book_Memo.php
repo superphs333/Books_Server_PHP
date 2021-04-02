@@ -32,7 +32,7 @@ while($row=$sql->fetch_array()){
     값 대입하기
     */
     $data->idx=$row['idx'];
-    $data->login_valuedx=$row['login_value'];
+    $data->login_value=$row['login_value'];
     $data->nickname=$row['nickname'];
     $data->profile_url=$row['profile_url'];
     $data->unique_book_value=$row['unique_book_value'];
