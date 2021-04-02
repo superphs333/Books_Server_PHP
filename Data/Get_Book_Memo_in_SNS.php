@@ -117,7 +117,7 @@ while($row=$sql->fetch_array()){
     보이지 않는 경우) 
     */
     //echo $row['idx'].$row['open'].$row['nickname'];
-    if($row['open']=="all"){ // 전체공개
+    if($row['open']=="all" || $row['login_value']==$requester){ // 전체공개 & 내글
         // 모든 사람에게 보임
         array_push($list,$data);
     }else if($row['open']=="follow"){ // 팔로우에게만 공개
@@ -137,7 +137,7 @@ while($row=$sql->fetch_array()){
     }else if($row['open']=="no"){ // 비공개
         // 포함x
     }
-    // 보이는 경우 -> 내 글, 해당 글의 작성자가 
+    // 
 
     //echo "</br>";
 
