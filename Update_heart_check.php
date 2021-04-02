@@ -42,11 +42,14 @@ if($sql){
         알림
         */
         if($check_heart=="false"){
-            // nickname 받아오기
-            $temp = "SELECT nickname FROM members WHERE login_value='{$login_value}'";
+            // 
+            // nickname, sender_id 받아오기
+            //$temp = "SELECT nickname, sender_id FROM members WHERE login_value='{$login_value}'";
+            $temp = "SELECT nickname, sender_id FROM members JOIN Book_Memo ON Book_Memo.login_value=members.login_value  WHERE idx={$idx_memo}";
             $sql = mq($temp);
             $row = $sql->fetch_array();
             $nickname = $row['nickname'];
+            $to = $row['sender_id'];
 
             // fcm에 보낼 데이터
             $data = json_encode(array(
