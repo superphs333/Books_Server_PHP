@@ -5,7 +5,7 @@ include_once('../db_config.php');
 
 // 객체 => Book_Memo
 class Book_Memo{
-    public $idx, $login_value, $nickname, $profile_url, $unique_book_value, $title, $thumbnail, $date_time, $img_urls, $memo, $page, $open, $count_heart, $count_comment,$check_heart;
+    public $idx, $login_value, $nickname, $profile_url, $unique_book_value, $title, $thumbnail, $date_time, $img_urls, $memo, $page, $open, $count_heart, $count_comment,$check_heart,$follow;
 }
     // check_heart = 내가 하트를 눌렀는지 체크(눌렀으면 1, 누르지 않았으면 0)
 
@@ -63,6 +63,8 @@ if($view=="전체"){
     
 }else if($view=="내메모"){
     $temp = "SELECT Book_Memo.idx, Book_Memo.login_value, members.nickname, members.profile_url, Book_Memo.unique_book_value, Books.title, Books.thumbnail, Book_Memo.date_time,img_urls, Book_Memo.memo, Book_Memo.page, Book_Memo.open, Book_Memo.count_heart, Book_Memo.count_comment From Book_Memo JOIN members ON Book_Memo.login_value=members.login_value JOIN Books ON Books.unique_book_value=Book_Memo.unique_book_value WHERE Books.unique_book_value LIKE '%{$unique_book_value}%' AND members.login_value='{$requester}'";
+}else if($view=="피드"){
+    
 }
 
 
@@ -109,6 +111,20 @@ while($row=$sql->fetch_array()){
          //echo "true";
     }
 
+    // 팔로우 판별
+    $temp_follow = "SELECT To_login_value FROM Follow WHERE From_login_value='{$requester}' AND To_login_value='{$row['login_value']}'";
+    $sql_follow = mq($temp_follow);
+    $row_follow = $sql_follow->fetch_array();
+    if($row_follow==true){ // 값이 있는 경우
+        $data->follow=true;
+    }else{ // 값이 없는 경우
+        $data->follow=false;
+        // 자신인 경우 : follow = true
+        if($requester==$row['login_value']){
+            $data->follow=true;
+        }
+    }
+
     /*
     open -> follow(이 게시물의 작성자가 나를 팔로우했을 경우에만 보이기), no(나 외에는 아무에게도 보이지 않기)
     - follow -> 이 작성자가 팔로우한 목록 알아야 함
@@ -136,7 +152,7 @@ while($row=$sql->fetch_array()){
         // 이 메모의 작성자의 팔로우에게만 보임 
         
         /*
-        작성자가 request를 팔로우했는지 확인
+        작성자가 requester를 팔로우했는지 확인
         */
         $temp_for_follow = "SELECT * FROM Follow WHERE From_login_value='{$row['login_value']}' AND To_login_value='{$requester}'";
         $sql_for_follow = mq($temp_for_follow);
