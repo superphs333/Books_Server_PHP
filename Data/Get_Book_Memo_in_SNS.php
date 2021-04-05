@@ -20,12 +20,13 @@ $list = array();
 $unique_book_value = $_POST['unique_book_value'];
 $requester = $_POST['requester'];
 $view = $_POST['view']; 
-
+$chk_heart = $_POST['chk_heart'];
 
 // 임시
-// $unique_book_value = '895461180X';
+// $unique_book_value = '';
 // $requester = 'dlthdus9413@naver.com';
-// $view = '팔로우';
+// $view = '전체';
+// $chk_heart = 'true';
 
 
 // view 분기 -> 전체, 팔로우, 내메모
@@ -68,14 +69,14 @@ if($view=="전체"){
 /*
 경우 -> 6가지
 */
-
 $sql = mq($temp);
 
 while($row=$sql->fetch_array()){
+
+    //echo $row['idx'].":";
     // 객체생성
     $data = new Book_Memo();
 
-    
 
     /*
     값 대입하기
@@ -90,7 +91,7 @@ while($row=$sql->fetch_array()){
     $data->date_time=$row['date_time'];
     $data->img_urls=$row['img_urls'];
     $data->memo=$row['memo'];
-    $data->page=$row['page'];
+    $data->page=$row['page']; 
     $data->open=$row['open'];
     $data->count_heart=$row['count_heart'];
     $data->count_comment=$row['count_comment'];
@@ -102,8 +103,10 @@ while($row=$sql->fetch_array()){
     $count = mysqli_num_rows($sql_heart);
     if($count==0){
         $data->check_heart=false;
+        //echo "false";
     }else{
         $data->check_heart=true;
+         //echo "true";
     }
 
     /*
@@ -120,6 +123,15 @@ while($row=$sql->fetch_array()){
     if($row['open']=="all" || $row['login_value']==$requester){ // 전체공개 & 내글
         // 모든 사람에게 보임
         array_push($list,$data);
+
+        // 하트체크 여부 -> 체크했을 했을시(chk_heart="true")에는 check_heart=true일때만 array_pop(요소제거)
+        if($chk_heart=="true"){
+            if($data->check_heart==false){
+                array_pop($list);
+                //echo "here";
+            }
+        }
+        
     }else if($row['open']=="follow"){ // 팔로우에게만 공개
         // 이 메모의 작성자의 팔로우에게만 보임 
         
@@ -132,22 +144,27 @@ while($row=$sql->fetch_array()){
         // 결과행갯수가 1인경우에만 -> 배열에 추가한다
         if($count==1){
             array_push($list,$data);
+            
+            // 하트체크 여부 -> 체크했을 했을시(chk_heart="true")에는 check_heart=true일때만 array_pop(요소제거)
+            if($chk_heart=="true"){
+                if($data->check_heart==false){
+                    array_pop($list);
+                    //echo "here";
+                }
+            }
         }
     
     }else if($row['open']=="no"){ // 비공개
         // 포함x
     }
-    // 
-
+    
     //echo "</br>";
 
-    // // list에 대입하기
-    // array_push($list,$data);
+
 
 }
-//echo "</br>".count($list);
+//echo "</br>".count($list)."</br>";
 echo json_encode($list)
-
 
 
 ?>
