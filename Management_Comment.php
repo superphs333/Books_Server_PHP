@@ -19,7 +19,7 @@ if($sort=="add"){
 }else if($sort=="delete"){
     $temp = "DELETE FROM Comment_Memo WHERE idx={$_POST['idx']}";
 }else if($sort=="add_comment"){
-    $temp = "INSERT INTO Comment_Memo(login_value, idx_memo, comment, date_time, group_idx, depth) VALUES('{$_POST['login_value']}','{$_POST['idx_memo']}','{$_POST['comment']}','{$_POST['date_time']}','{$_POST['group_idx']}',1)";
+    $temp = "INSERT INTO Comment_Memo(login_value, idx_memo, comment, date_time, group_idx, depth, target) VALUES('{$_POST['login_value']}','{$_POST['idx_memo']}','{$_POST['comment']}','{$_POST['date_time']}','{$_POST['group_idx']}',1,'{$_POST['target']}')";
 }
 
 // 데이터베이스 반영
