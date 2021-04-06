@@ -7,18 +7,17 @@ include_once('./Function/Function_Group.php');
 
 // 데이터 받아오기
 $sort = $_POST['sort']; // add,add_comment, edit, delete
-$login_value = $_POST['login_value'];
-$idx_memo = $_POST['idx_memo'];
-$comment = $_POST['comment'];
+
+
 
 
 // sort에 따라 mysql문 분기
 if($sort=="add"){
-    $temp = "INSERT INTO Comment_Memo(login_value, idx_memo, comment) VALUES('{$login_value}','{$idx_memo}','{$comment}')";
-}else if($sort="edit"){
-
+    $temp = "INSERT INTO Comment_Memo(login_value, idx_memo, comment,date_time) VALUES('{$_POST['login_value']}','{$_POST['idx_memo']}','{$_POST['comment']}','{$_POST['date_time']}')";
+}else if($sort=="edit"){
+    $temp = "UPDATE Comment_Memo SET comment='{$_POST['comment']}' WHERE idx={$_POST['idx']}";
 }else if($sort=="delete"){
-
+    $temp = "DELETE FROM Comment_Memo WHERE idx={$_POST['idx']}";
 }
 
 // 데이터베이스 반영
@@ -26,12 +25,16 @@ $sql = mq($temp);
 if($sql){
     echo "success§";
 
+    // idx값 가져오기
+    $last_uid = mysqli_insert_id($db);
+    echo $last_uid."§";
+
     // Book_Memo의 count_comment값 셋팅
-    $temp = "SELECT COUNT(*) as count FROM Comment_Memo WHERE idx_memo={$idx_memo}";
+    $temp = "SELECT COUNT(*) as count FROM Comment_Memo WHERE idx_memo={$_POST['idx_memo']}";
     $sql = mq($temp);
     $result = $sql->fetch_array();
     $count = $result['count'];
-    $temp = "UPDATE Book_Memo SET count_comment={$count} WHERE idx={$idx_memo}";
+    $temp = "UPDATE Book_Memo SET count_comment={$count} WHERE idx={$_POST['idx_memo']}";
     $sql = mq($temp);
     if($sql){
         echo "success(count_comment)셋팅§";
@@ -40,10 +43,10 @@ if($sql){
     }
 
     // sort=add인 경우 상대방에게 알림 전송
-    if($sort="add"){
+    if($sort=="add"){
 
         // idx_memo작성자 
-        $temp = "SELECT sender_id, nickname FROM Book_Memo JOIN members ON Book_Memo.login_value=members.login_value WHERE Book_Memo.idx={$idx_memo}";
+        $temp = "SELECT sender_id, nickname FROM Book_Memo JOIN members ON Book_Memo.login_value=members.login_value WHERE Book_Memo.idx={$_POST['idx_memo']}";
         $sql = mq($temp);
         $result = $sql->fetch_array();
         $nickname = $result['nickname'];
