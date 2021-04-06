@@ -18,6 +18,8 @@ if($sort=="add"){
     $temp = "UPDATE Comment_Memo SET comment='{$_POST['comment']}' WHERE idx={$_POST['idx']}";
 }else if($sort=="delete"){
     $temp = "DELETE FROM Comment_Memo WHERE idx={$_POST['idx']}";
+}else if($sort=="add_comment"){
+    $temp = "INSERT INTO Comment_Memo(login_value, idx_memo, comment, date_time, group_idx, depth) VALUES('{$_POST['login_value']}','{$_POST['idx_memo']}','{$_POST['comment']}','{$_POST['date_time']}','{$_POST['group_idx']}',1)";
 }
 
 // 데이터베이스 반영
@@ -44,6 +46,15 @@ if($sql){
 
     // sort=add인 경우 상대방에게 알림 전송
     if($sort=="add"){
+
+        // group_idx값 셋팅
+        $temp = "UPDATE Comment_Memo SET group_idx={$last_uid} WHERE idx={$last_uid}";
+        $sql = mq($temp);
+        if($sql){
+            echo "group_idx값 셋팅§";
+        }else{   
+            echo mysqli_error($db)."§";
+        }
 
         // idx_memo작성자 
         $temp = "SELECT sender_id, nickname FROM Book_Memo JOIN members ON Book_Memo.login_value=members.login_value WHERE Book_Memo.idx={$_POST['idx_memo']}";
