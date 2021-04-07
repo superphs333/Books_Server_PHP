@@ -17,7 +17,8 @@ if($sort=="add"){
 }else if($sort=="edit"){
     $temp = "UPDATE Comment_Memo SET comment='{$_POST['comment']}' WHERE idx={$_POST['idx']}";
 }else if($sort=="delete"){
-    $temp = "DELETE FROM Comment_Memo WHERE idx={$_POST['idx']}";
+    //$temp = "DELETE FROM Comment_Memo WHERE idx={$_POST['idx']}";
+    $temp = "UPDATE Comment_Memo SET visibility=0 WHERE idx={$_POST['idx']}";
 }else if($sort=="add_comment"){
     $temp = "INSERT INTO Comment_Memo(login_value, idx_memo, comment, date_time, group_idx, depth, target) VALUES('{$_POST['login_value']}','{$_POST['idx_memo']}','{$_POST['comment']}','{$_POST['date_time']}','{$_POST['group_idx']}',1,'{$_POST['target']}')";
 }
@@ -32,7 +33,7 @@ if($sql){
     echo $last_uid."§";
 
     // Book_Memo의 count_comment값 셋팅
-    $temp = "SELECT COUNT(*) as count FROM Comment_Memo WHERE idx_memo={$_POST['idx_memo']}";
+    $temp = "SELECT COUNT(*) as count FROM Comment_Memo WHERE idx_memo={$_POST['idx_memo']} AND visibility=1";
     $sql = mq($temp);
     $result = $sql->fetch_array();
     $count = $result['count'];
@@ -44,24 +45,35 @@ if($sql){
         echo mysqli_error($db)."§";
     }
 
-    // sort=add인 경우 상대방에게 알림 전송
-    if($sort=="add"){
+    // sort=add, sort=add_comment인 경우 상대방에게 알림 전송
+    if($sort=="add" || $sort=="add_comment"){
 
-        // group_idx값 셋팅
-        $temp = "UPDATE Comment_Memo SET group_idx={$last_uid} WHERE idx={$last_uid}";
-        $sql = mq($temp);
-        if($sql){
-            echo "group_idx값 셋팅§";
-        }else{   
-            echo mysqli_error($db)."§";
+        if($sort=="add"){
+            // group_idx값 셋팅
+            $temp = "UPDATE Comment_Memo SET group_idx={$last_uid} WHERE idx={$last_uid}";
+            $sql = mq($temp);
+            if($sql){
+                echo "group_idx값 셋팅§";
+            }else{   
+                echo mysqli_error($db)."§";
+            }
+
+            // 보낼 사람
+                // idx_memo작성자 
+            $temp = "SELECT sender_id, nickname FROM Book_Memo JOIN members ON Book_Memo.login_value=members.login_value WHERE Book_Memo.idx={$_POST['idx_memo']}";
+            $sql = mq($temp);
+            $result = $sql->fetch_array();
+            $nickname = $result['nickname'];
+            $to = $result['sender_id'];
+        }else if($sort=="add_comment"){
+            // 보낼 사람
+                // target
+            $temp = "SELECT sender_id, nickname FROM members WHERE login_value='{$_POST['target']}'";
+            $sql = mq($temp);
+            $result = $sql->fetch_array();
+            $nickname = $result['nickname'];
+            $to = $result['sender_id'];
         }
-
-        // idx_memo작성자 
-        $temp = "SELECT sender_id, nickname FROM Book_Memo JOIN members ON Book_Memo.login_value=members.login_value WHERE Book_Memo.idx={$_POST['idx_memo']}";
-        $sql = mq($temp);
-        $result = $sql->fetch_array();
-        $nickname = $result['nickname'];
-        $to = $result['sender_id'];
 
         // 알람에 보낼 것
         $data = json_encode(array(
@@ -69,7 +81,8 @@ if($sql){
             "data" => array(
                 "sort"   => "For_Comment",
                 "title" => "알림",
-                "message" => "{$nickname}님이 댓글을 달았습니다")
+                "message" => "{$nickname}님이 댓글을 달았습니다",
+                "idx_memo" => "{$_POST['idx_memo']}")
                 ));
 
         // 알림보내기(데이터메세지 형식)
