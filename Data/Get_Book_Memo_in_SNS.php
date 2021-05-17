@@ -24,15 +24,15 @@ $chk_heart = $_POST['chk_heart'];
 
 // 임시
 // $unique_book_value = '';
-// $requester = 'dlthdus9413@naver.com';
-// $view = '전체';
-// $chk_heart = 'true';
+// $requester = 'superphs333@naver.com';
+// $view = '팔로우';
+// $chk_heart = 'false';
 
 
 // view 분기 -> 전체, 팔로우, 내메모
 if($view=="전체"){
     // 팔로우 상관없이
-    $temp = "SELECT Book_Memo.idx, Book_Memo.login_value, members.nickname, members.profile_url, Book_Memo.unique_book_value, Books.title, Books.thumbnail, Book_Memo.date_time,img_urls, Book_Memo.memo, Book_Memo.page, Book_Memo.open, Book_Memo.count_heart, Book_Memo.count_comment From Book_Memo JOIN members ON Book_Memo.login_value=members.login_value JOIN Books ON Books.unique_book_value=Book_Memo.unique_book_value WHERE Books.unique_book_value LIKE '%{$unique_book_value}%'";
+    $temp = "SELECT Book_Memo.idx, Book_Memo.login_value, members.nickname, members.profile_url, Book_Memo.unique_book_value, Books.title, Books.thumbnail, Book_Memo.date_time,img_urls, Book_Memo.memo, Book_Memo.page, Book_Memo.open, Book_Memo.count_heart, Book_Memo.count_comment From Book_Memo JOIN members ON Book_Memo.login_value=members.login_value JOIN Books ON Books.unique_book_value=Book_Memo.unique_book_value WHERE Books.unique_book_value LIKE '%{$unique_book_value}%' ORDER BY date_time DESC";
 }else if($view=="팔로우"){
     /*
     requester의 팔로우 목록
@@ -43,7 +43,7 @@ if($view=="전체"){
     while($row=$sql_for_request_follow->fetch_array()){
         array_push($list_request_follow,$row['To_login_value']);
     }
-    if($list_request_follow!=0){
+    if(sizeof($list_request_follow)!=0){
         // int에 넣을 string
         $for_in = null;
         for($i=0; $i<count($list_request_follow); $i++){
@@ -56,15 +56,19 @@ if($view=="전체"){
         $for_in = mb_substr($for_in,0,-2,'utf-8');
         //echo $for_in;
 
-        $temp = "SELECT Book_Memo.idx, Book_Memo.login_value, members.nickname, members.profile_url, Book_Memo.unique_book_value, Books.title, Books.thumbnail, Book_Memo.date_time,img_urls, Book_Memo.memo, Book_Memo.page, Book_Memo.open, Book_Memo.count_heart, Book_Memo.count_comment From Book_Memo JOIN members ON Book_Memo.login_value=members.login_value JOIN Books ON Books.unique_book_value=Book_Memo.unique_book_value WHERE Books.unique_book_value LIKE '%{$unique_book_value}%' AND members.login_value in ({$for_in})";
+        $temp = "SELECT Book_Memo.idx, Book_Memo.login_value, members.nickname, members.profile_url, Book_Memo.unique_book_value, Books.title, Books.thumbnail, Book_Memo.date_time,img_urls, Book_Memo.memo, Book_Memo.page, Book_Memo.open, Book_Memo.count_heart, Book_Memo.count_comment From Book_Memo JOIN members ON Book_Memo.login_value=members.login_value JOIN Books ON Books.unique_book_value=Book_Memo.unique_book_value WHERE Books.unique_book_value LIKE '%{$unique_book_value}%' AND members.login_value in ({$for_in}) ORDER BY date_time DESC";
     }else{
-        $temp = "SELECT Book_Memo.idx, Book_Memo.login_value, members.nickname, members.profile_url, Book_Memo.unique_book_value, Books.title, Books.thumbnail, Book_Memo.date_time,img_urls, Book_Memo.memo, Book_Memo.page, Book_Memo.open, Book_Memo.count_heart, Book_Memo.count_comment From Book_Memo JOIN members ON Book_Memo.login_value=members.login_value JOIN Books ON Books.unique_book_value=Book_Memo.unique_book_value WHERE Books.unique_book_value LIKE '%{$unique_book_value}%'";
+    
+        $temp = "SELECT Book_Memo.idx, Book_Memo.login_value, members.nickname, members.profile_url, Book_Memo.unique_book_value, Books.title, Books.thumbnail, Book_Memo.date_time,img_urls, Book_Memo.memo, Book_Memo.page, Book_Memo.open, Book_Memo.count_heart, Book_Memo.count_comment From Book_Memo JOIN members ON Book_Memo.login_value=members.login_value JOIN Books ON Books.unique_book_value=Book_Memo.unique_book_value WHERE Books.unique_book_value LIKE '%{$unique_book_value}%' ORDER BY date_time DESC";
+
+        // 아무값도 나오지 않아야 함
+        $temp = "SELECT Book_Memo.idx, Book_Memo.login_value, members.nickname, members.profile_url, Book_Memo.unique_book_value, Books.title, Books.thumbnail, Book_Memo.date_time,img_urls, Book_Memo.memo, Book_Memo.page, Book_Memo.open, Book_Memo.count_heart, Book_Memo.count_comment From Book_Memo JOIN members ON Book_Memo.login_value=members.login_value JOIN Books ON Books.unique_book_value=Book_Memo.unique_book_value WHERE Books.unique_book_value LIKE '%{$unique_book_value}%' AND Book_Memo.idx="."0"." ORDER BY date_time DESC";
     }
     
 }else if($view=="내메모"){
-    $temp = "SELECT Book_Memo.idx, Book_Memo.login_value, members.nickname, members.profile_url, Book_Memo.unique_book_value, Books.title, Books.thumbnail, Book_Memo.date_time,img_urls, Book_Memo.memo, Book_Memo.page, Book_Memo.open, Book_Memo.count_heart, Book_Memo.count_comment From Book_Memo JOIN members ON Book_Memo.login_value=members.login_value JOIN Books ON Books.unique_book_value=Book_Memo.unique_book_value WHERE Books.unique_book_value LIKE '%{$unique_book_value}%' AND members.login_value='{$requester}'";
+    $temp = "SELECT Book_Memo.idx, Book_Memo.login_value, members.nickname, members.profile_url, Book_Memo.unique_book_value, Books.title, Books.thumbnail, Book_Memo.date_time,img_urls, Book_Memo.memo, Book_Memo.page, Book_Memo.open, Book_Memo.count_heart, Book_Memo.count_comment From Book_Memo JOIN members ON Book_Memo.login_value=members.login_value JOIN Books ON Books.unique_book_value=Book_Memo.unique_book_value WHERE Books.unique_book_value LIKE '%{$unique_book_value}%' AND members.login_value='{$requester}' ORDER BY date_time DESC";
 }else if($view=="피드"){
-    
+    $temp = "SELECT Book_Memo.idx, Book_Memo.login_value, members.nickname, members.profile_url, Book_Memo.unique_book_value, Books.title, Books.thumbnail, Book_Memo.date_time,img_urls, Book_Memo.memo, Book_Memo.page, Book_Memo.open, Book_Memo.count_heart, Book_Memo.count_comment From Book_Memo JOIN members ON Book_Memo.login_value=members.login_value JOIN Books ON Books.unique_book_value=Book_Memo.unique_book_value WHERE Books.unique_book_value LIKE '%{$unique_book_value}%' AND members.login_value='{$requester}' ORDER BY date_time DESC";
 }
 
 

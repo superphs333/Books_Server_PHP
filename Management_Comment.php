@@ -82,7 +82,8 @@ if($sql){
                 "sort"   => "For_Comment",
                 "title" => "알림",
                 "message" => "{$nickname}님이 댓글을 달았습니다",
-                "idx_memo" => "{$_POST['idx_memo']}")
+                "writer" => "{$_POST['login_value']}",
+                "idx_memo" => "{$_POST['idx_memo']}"),
                 ));
 
         // 알림보내기(데이터메세지 형식)

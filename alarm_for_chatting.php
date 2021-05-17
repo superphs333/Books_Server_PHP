@@ -19,7 +19,7 @@ $writer = $_POST['writer'];
 
 // 데이터베이스(Join_Chatting_Room)에서 해당 room_idx에 참가하는 사용자 데이터를 불러온다 -> 배열에 저장
 $temp = "SELECT sender_id FROM `Join_Chatting_Room` JOIN `members` ON Join_Chatting_Room.login_value=members.login_value where Join_Chatting_Room.room_idx={$room_idx}";
-//echo $temp;
+echo $temp;
 $sql = mq($temp); 
 $registration_ids_array = array();
 while($row=$sql->fetch_array()){
